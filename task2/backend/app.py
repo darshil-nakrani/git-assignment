@@ -22,5 +22,26 @@ def submit():
         print("Insert error:", str(e))
         return jsonify({'success': False, 'message': str(e)}), 500
     
+@app.route('/submittodoitem', methods=['POST'])
+def submit_todo_item():
+    data = request.get_json()
+    item_name = data.get('itemName')
+    item_description = data.get('itemDescription')
+
+    if not item_name or not item_description:
+        return jsonify({'success': False, 'message': 'Both itemName and itemDescription are required'}), 400
+
+    todo_item = {
+        'itemName': item_name,
+        'itemDescription': item_description
+    }
+
+    try:
+        collection.insert_one(todo_item)
+        return jsonify({'success': True, 'message': 'To-Do item inserted successfully'}), 201
+    except Exception as e:
+        print("Insert error:", str(e))
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=9000, debug=True)
